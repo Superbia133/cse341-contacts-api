@@ -1,7 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const dotenv = require('dotenv');
 const { initDb } = require('./db/connect');
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -9,25 +12,20 @@ const port = process.env.PORT || 8080;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-  res.setHeader('Content-Type', 'application/json');
-  next();
-});
 
-// Root test route to prevent "Cannot GET /"
+// Base test route
 app.get('/', (req, res) => {
   res.send('API is working!');
 });
 
-// Routes
+// Import and use routes
 const routes = require('./routes');
-app.use('/', routes);
+app.use('/api', routes);
 
-// Initialize DB and start server
+// Connect to DB then start server
 initDb((err) => {
   if (err) {
-    console.error('Failed to initialize database', err);
-    process.exit(1);
+    console.error('Database initialization failed:', err);
   } else {
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
