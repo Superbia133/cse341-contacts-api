@@ -1,24 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const connectDB = require('./db/connect'); // ✅ updated path
-const contactRoutes = require('./routes/contacts'); // ✅ updated path
+const connectDB = require('./backend/db/connect'); // ✅ fixed path
+const contactRoutes = require('./backend/routes/contacts'); // ✅ fixed path
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Middleware
 app.use(bodyParser.json());
-
-// Routes
 app.use('/contacts', contactRoutes);
 
-// Root route (optional)
+// Optional root route
 app.get('/', (req, res) => {
   res.send('Welcome to the Contacts API!');
 });
 
-// Connect to DB and start server
 connectDB()
   .then(() => {
     app.listen(port, () => {
