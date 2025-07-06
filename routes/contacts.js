@@ -1,16 +1,12 @@
-const getAll = (req, res) => {
-  res.status(200).json({
-    message: "GET all contacts",
-  });
-};
+const express = require('express');
+const router = express.Router(); // ✅ Use Express's built-in Router
 
-const getSingle = (req, res) => {
-  res.status(200).json({
-    message: `GET single contact with id ${req.params.id}`,
-  });
-};
+const contactsController = require('../controllers/contacts'); // Adjust path if needed
 
-module.exports = {
-  getAll,
-  getSingle,
-};
+// Route to get all contacts
+router.get('/', contactsController.getAll);
+
+// Route to get a single contact by ID
+router.get('/:id', contactsController.getSingle);
+
+module.exports = router;
