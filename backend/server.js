@@ -13,11 +13,16 @@ const port = process.env.PORT || 8080;
 app.use(cors());
 app.use(bodyParser.json());
 
+// Root route
+app.get('/', (req, res) => {
+  res.send('API is working! Visit /api/contacts to view contacts.');
+});
+
 // Routes
 const routes = require('./routes');
 app.use('/api', routes);
 
-// Connect to DB then start server
+// DB and server start
 initDb((err) => {
   if (err) {
     console.error(err);
