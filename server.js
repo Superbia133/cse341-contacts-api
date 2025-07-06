@@ -1,21 +1,30 @@
 const express = require('express');
-const dotenv = require('dotenv');
-const mongodb = require('./cse341-ww-student-code-w01-2-team-frontendStart/backend/db/connect');
-const contactRoutes = require('./cse341-ww-student-code-w01-2-team-frontendStart/backend/routes/contacts');
-
-dotenv.config();
+const bodyParser = require('body-parser');
+const connectDB = require('./db/connect'); // ✅ updated path
+const contactRoutes = require('./routes/contacts'); // ✅ updated path
+require('dotenv').config();
 
 const app = express();
+const port = process.env.PORT || 8080;
 
-app.use(express.json());
+// Middleware
+app.use(bodyParser.json());
+
+// Routes
 app.use('/contacts', contactRoutes);
 
-mongodb.initDb((err) => {
-  if (err) {
-    console.error(err);
-  } else {
-    app.listen(process.env.PORT || 8080, () => {
-      console.log(`🚀 Server running at http://localhost:${process.env.PORT}`);
-    });
-  }
+// Root route (optional)
+app.get('/', (req, res) => {
+  res.send('Welcome to the Contacts API!');
 });
+
+// Connect to DB and start server
+connectDB()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`🚀 Server running at http://localhost:${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Database connection failed:', err);
+  });
