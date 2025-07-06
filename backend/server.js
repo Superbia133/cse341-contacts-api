@@ -1,26 +1,33 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const connectDB = require('./backend/db/connect'); // ✅ fixed path
-const contactRoutes = require('./backend/routes/contacts'); // ✅ fixed path
-require('dotenv').config();
-
 const app = express();
-const port = process.env.PORT || 8080;
+const bodyParser = require('body-parser');
+const mongodb = require('./db/connect'); // ✅ correct relative path
+const routes = require('./routes');      // ✅ assuming you have an index.js inside routes
 
+const port = process.env.PORT || 3000;
+
+// Middleware
 app.use(bodyParser.json());
-app.use('/contacts', contactRoutes);
-
-// Optional root route
-app.get('/', (req, res) => {
-  res.send('Welcome to the Contacts API!');
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Z-Key'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  next();
 });
 
-connectDB()
-  .then(() => {
+// Routes
+app.use('/', routes); // Adjust if you're using a subpath like '/contacts'
+
+// Start server
+mongodb.initDb((err) => {
+  if (err) {
+    console.error(err);
+  } else {
     app.listen(port, () => {
-      console.log(`🚀 Server running at http://localhost:${port}`);
+      console.log(`Server running on port ${port}`);
     });
-  })
-  .catch((err) => {
-    console.error('Database connection failed:', err);
-  });
+  }
+});
