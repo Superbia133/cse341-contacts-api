@@ -1,47 +1,55 @@
-const { getDb } = require('../db/connect');
 const { ObjectId } = require('mongodb');
-
-const collection = 'contacts';
+const { getDb } = require('../db/connect');
 
 const getAllContacts = async (req, res) => {
-  const db = getDb().db();
-  const results = await db.collection(collection).find().toArray();
-  res.json(results);
+  const db = getDb().db('cse341');
+  const contacts = await db.collection('contacts').find().toArray();
+  res.status(200).json(contacts);
 };
 
-const getContactById = async (req, res) => {
-  const db = getDb().db();
-  const contact = await db.collection(collection).findOne({ _id: new ObjectId(req.params.id) });
-  if (!contact) return res.status(404).json({ message: 'Contact not found' });
-  res.json(contact);
+const getSingleContact = async (req, res) => {
+  const contactId = new ObjectId(req.params.id);
+  const db = getDb().db('cse341');
+  const contact = await db.collection('contacts').findOne({ _id: contactId });
+
+  if (contact) res.status(200).json(contact);
+  else res.status(404).json({ message: 'Contact not found' });
 };
 
 const createContact = async (req, res) => {
-  const db = getDb().db();
-  const contact = req.body;
-  const result = await db.collection(collection).insertOne(contact);
+  const db = getDb().db('cse341');
+  const newContact = req.body;
+
+  const result = await db.collection('contacts').insertOne(newContact);
   res.status(201).json(result);
 };
 
 const updateContact = async (req, res) => {
-  const db = getDb().db();
-  const result = await db
-    .collection(collection)
-    .replaceOne({ _id: new ObjectId(req.params.id) }, req.body);
-  if (result.modifiedCount === 0) return res.status(404).json({ message: 'Contact not found' });
-  res.json({ message: 'Contact updated' });
+  const contactId = new ObjectId(req.params.id);
+  const updateData = req.body;
+  const db = getDb().db('cse341');
+
+  const result = await db.collection('contacts').updateOne(
+    { _id: contactId },
+    { $set: updateData }
+  );
+
+  if (result.modifiedCount > 0) res.status(204).send();
+  else res.status(404).json({ message: 'Contact not found or no changes made' });
 };
 
 const deleteContact = async (req, res) => {
-  const db = getDb().db();
-  const result = await db.collection(collection).deleteOne({ _id: new ObjectId(req.params.id) });
-  if (result.deletedCount === 0) return res.status(404).json({ message: 'Contact not found' });
-  res.json({ message: 'Contact deleted' });
+  const contactId = new ObjectId(req.params.id);
+  const db = getDb().db('cse341');
+
+  const result = await db.collection('contacts').deleteOne({ _id: contactId });
+  if (result.deletedCount > 0) res.status(200).json({ message: 'Deleted' });
+  else res.status(404).json({ message: 'Contact not found' });
 };
 
 module.exports = {
   getAllContacts,
-  getContactById,
+  getSingleContact,
   createContact,
   updateContact,
   deleteContact

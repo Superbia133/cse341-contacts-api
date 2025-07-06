@@ -1,24 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const dotenv = require('dotenv');
-dotenv.config();
-
 const { initDb } = require('./db/connect');
-const routes = require('./routes');
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8080;
 
+// Middleware
+app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/api', routes); // All routes will be under /api
+// Routes
+const routes = require('./routes');
+app.use('/api', routes);
 
-// Root route
-app.get('/', (req, res) => {
-  res.send('API is working!');
-});
-
-// Start server after DB is initialized
+// Connect to DB then start server
 initDb((err) => {
   if (err) {
     console.error(err);
