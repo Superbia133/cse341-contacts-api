@@ -1,8 +1,16 @@
-const express = require('express');
-const router = express.Router();
-const contactsController = require('../controllers/contacts');
+const getAll = (req, res) => {
+  res.status(200).json({
+    message: "GET all contacts",
+  });
+};
 
-router.get('/', contactsController.getAll);
-router.get('/:id', contactsController.getSingle);
+const getSingle = (req, res) => {
+  res.status(200).json({
+    message: `GET single contact with id ${req.params.id}`,
+  });
+};
 
-module.exports = router;
+module.exports = {
+  getAll,
+  getSingle,
+};
