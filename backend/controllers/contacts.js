@@ -1,56 +1,20 @@
-const { ObjectId } = require('mongodb');
-const { getDb } = require('../db/connect');
+const express = require('express');
+const router = express.Router();
+const contactsController = require('../controllers/contactsController');
 
-const getAllContacts = async (req, res) => {
-  const db = getDb().db('cse341');
-  const contacts = await db.collection('contacts').find().toArray();
-  res.status(200).json(contacts);
-};
+// GET all contacts
+router.get('/', contactsController.getAllContacts);
 
-const getSingleContact = async (req, res) => {
-  const contactId = new ObjectId(req.params.id);
-  const db = getDb().db('cse341');
-  const contact = await db.collection('contacts').findOne({ _id: contactId });
+// GET a single contact by ID
+router.get('/:id', contactsController.getSingleContact);
 
-  if (contact) res.status(200).json(contact);
-  else res.status(404).json({ message: 'Contact not found' });
-};
+// POST a new contact
+router.post('/', contactsController.createContact);
 
-const createContact = async (req, res) => {
-  const db = getDb().db('cse341');
-  const newContact = req.body;
+// PUT (update) an existing contact
+router.put('/:id', contactsController.updateContact);
 
-  const result = await db.collection('contacts').insertOne(newContact);
-  res.status(201).json(result);
-};
+// DELETE a contact
+router.delete('/:id', contactsController.deleteContact);
 
-const updateContact = async (req, res) => {
-  const contactId = new ObjectId(req.params.id);
-  const updateData = req.body;
-  const db = getDb().db('cse341');
-
-  const result = await db.collection('contacts').updateOne(
-    { _id: contactId },
-    { $set: updateData }
-  );
-
-  if (result.modifiedCount > 0) res.status(204).send();
-  else res.status(404).json({ message: 'Contact not found or no changes made' });
-};
-
-const deleteContact = async (req, res) => {
-  const contactId = new ObjectId(req.params.id);
-  const db = getDb().db('cse341');
-
-  const result = await db.collection('contacts').deleteOne({ _id: contactId });
-  if (result.deletedCount > 0) res.status(200).json({ message: 'Deleted' });
-  else res.status(404).json({ message: 'Contact not found' });
-};
-
-module.exports = {
-  getAllContacts,
-  getSingleContact,
-  createContact,
-  updateContact,
-  deleteContact
-};
+module.exports = router;

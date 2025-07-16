@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const { initDb } = require('./db/connect');
+const setupSwagger = require('./swagger');
 
 dotenv.config();
 
@@ -15,12 +16,15 @@ app.use(bodyParser.json());
 
 // Root route
 app.get('/', (req, res) => {
-  res.send('API is working! Visit /api/contacts to view contacts.');
+  res.send('API is working! Visit /api/contacts or /api-docs for Swagger.');
 });
 
 // Routes
 const routes = require('./routes');
 app.use('/api', routes);
+
+// Swagger
+setupSwagger(app);
 
 // DB and server start
 initDb((err) => {
