@@ -21,17 +21,7 @@
         }
       }
     },
-    "/api/": {
-      "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/contacts/": {
+    "/contacts/": {
       "get": {
         "description": "",
         "produces": [
@@ -58,7 +48,7 @@
         }
       }
     },
-    "/api/contacts/{id}": {
+    "/contacts/{id}": {
       "get": {
         "description": "",
         "produces": [
