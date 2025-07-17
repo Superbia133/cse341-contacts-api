@@ -6,14 +6,14 @@
     "version": "1.0.0"
   },
   "host": "cse341-contacts-api-syz7.onrender.com",
-  "basePath": "/",
+  "basePath": "/api",
   "schemes": [
     "https"
   ],
   "paths": {
     "/": {
       "get": {
-        "description": "",
+        "description": "Root path of the API",
         "responses": {
           "200": {
             "description": "OK"
@@ -21,15 +21,15 @@
         }
       }
     },
-    "/contacts/": {
+    "/contacts": {
       "get": {
-        "description": "",
+        "description": "Retrieve all contacts",
         "produces": [
           "application/json"
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Success"
           },
           "500": {
             "description": "Internal Server Error"
@@ -37,7 +37,24 @@
         }
       },
       "post": {
-        "description": "",
+        "description": "Create a new contact",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstName": { "type": "string" },
+                "lastName": { "type": "string" },
+                "email": { "type": "string" },
+                "favoriteColor": { "type": "string" },
+                "birthday": { "type": "string", "format": "date" }
+              }
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -50,10 +67,7 @@
     },
     "/contacts/{id}": {
       "get": {
-        "description": "",
-        "produces": [
-          "application/json"
-        ],
+        "description": "Get a single contact by ID",
         "parameters": [
           {
             "name": "id",
@@ -64,7 +78,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Success"
           },
           "404": {
             "description": "Not Found"
@@ -75,13 +89,28 @@
         }
       },
       "put": {
-        "description": "",
+        "description": "Update a contact by ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstName": { "type": "string" },
+                "lastName": { "type": "string" },
+                "email": { "type": "string" },
+                "favoriteColor": { "type": "string" },
+                "birthday": { "type": "string", "format": "date" }
+              }
+            }
           }
         ],
         "responses": {
@@ -97,7 +126,7 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Delete a contact by ID",
         "parameters": [
           {
             "name": "id",
@@ -108,7 +137,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Deleted"
           },
           "404": {
             "description": "Not Found"
