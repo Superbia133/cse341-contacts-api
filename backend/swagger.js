@@ -1,9 +1,17 @@
-const swaggerUi = require('swagger-ui-express');
-const swaggerFile = require('./swagger-output.json');
+const swaggerAutogen = require('swagger-autogen')();
 
-// Define and export the setupSwagger function
-function setupSwagger(app) {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
-}
+const doc = {
+  info: {
+    title: 'Contacts API',
+    description: 'Documentation for Contacts API',
+    version: '1.0.0',
+  },
+  host: 'cse341-contacts-api-syz7.onrender.com', // 🔁 UPDATED for live Render domain
+  schemes: ['https'], // 🔁 Use https for Render
+  basePath: '/',
+};
 
-module.exports = setupSwagger;
+const outputFile = './backend/swagger-output.json';
+const endpointsFiles = ['./backend/routes/index.js']; // 👈 Adjust if your main route file is elsewhere
+
+swaggerAutogen(outputFile, endpointsFiles, doc);

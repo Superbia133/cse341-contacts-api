@@ -27,10 +27,10 @@ app.use('/api', routes);
 // Swagger documentation
 setupSwagger(app);
 
-// Start server after DB init
+// Start server only after successful DB connection
 initDb((err) => {
   if (err) {
-    console.error(err);
+    console.error('❌ Failed to connect to database:', err);
   } else {
     app.listen(port, () => {
       console.log(`🚀 Server is running on port ${port}`);
