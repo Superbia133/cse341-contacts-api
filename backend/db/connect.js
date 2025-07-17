@@ -12,7 +12,7 @@ const initDb = (callback) => {
 
   MongoClient.connect(process.env.MONGODB_URI)
     .then((client) => {
-      _db = client;
+      _db = client.db(); // Use the database name from the URI
       console.log('Database initialized');
       callback(null, _db);
     })
