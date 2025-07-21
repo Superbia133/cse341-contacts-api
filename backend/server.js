@@ -10,15 +10,30 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+// ✅ Enable CORS
 app.use(cors());
-app.use(express.json());
-app.use('/api', routes);
-setupSwagger(app); // Mounts Swagger at /api-docs
 
+// ✅ Manually set headers (Swagger UI needs these on Render)
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  next();
+});
+
+// ✅ Parse JSON bodies
+app.use(express.json());
+
+// ✅ Mount routes and Swagger
+app.use('/api', routes);
+setupSwagger(app);
+
+// ✅ Base route
 app.get('/', (req, res) => {
   res.send('API is running. Visit /api-docs for documentation.');
 });
 
+// ✅ Initialize DB before server starts
 initDb((err) => {
   if (err) {
     console.error('❌ Failed to connect to database:', err);
