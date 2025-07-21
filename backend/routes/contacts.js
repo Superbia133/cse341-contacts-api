@@ -40,7 +40,7 @@ router.get('/', contactsController.getAllContacts);
  *       404:
  *         description: Contact not found
  */
-router.get('/:id', contactsController.getSingleContact);
+router.get('/:id', contactsController.getContactById);
 
 /**
  * @swagger
