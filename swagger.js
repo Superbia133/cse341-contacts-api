@@ -1,27 +1,9 @@
-const swaggerJSDoc = require('swagger-jsdoc');
+// swagger.js
 const swaggerUi = require('swagger-ui-express');
-
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Contacts API',
-      version: '1.0.0',
-      description: 'API documentation for the CSE341 Contacts project',
-    },
-    servers: [
-      {
-        url: 'https://your-app-name.onrender.com/api', // replace with your real URL!
-      },
-    ],
-  },
-  apis: ['./routes/contacts.js'], // where Swagger will look for comments
-};
-
-const swaggerSpec = swaggerJSDoc(options);
+const swaggerDocument = require('./swagger-output.json'); // If this file is in the root
 
 function setupSwagger(app) {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
 
 module.exports = setupSwagger;
