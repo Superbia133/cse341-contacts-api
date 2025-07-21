@@ -3,13 +3,13 @@ const swaggerAutogen = require('swagger-autogen')();
 const doc = {
   info: {
     title: 'Contacts API',
-    description: 'Documentation for Contacts API',
+    description: 'API for managing contacts',
   },
-  host: 'localhost:3000',
-  schemes: ['http'],
+  host: 'cse341-contacts-api-sy7z.onrender.com', // ✅ REPLACED with your live URL
+  schemes: ['https'],
 };
 
-const outputFile = './backend/swagger-output.json';
+const outputFile = './swagger-output.json';
 const endpointsFiles = ['./backend/server.js'];
 
 swaggerAutogen(outputFile, endpointsFiles, doc);
