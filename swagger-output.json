@@ -7,6 +7,12 @@
   },
   "host": "cse341-contacts-api-sy7z.onrender.com",
   "basePath": "/",
+  "tags": [
+    {
+      "name": "Contacts",
+      "description": "Endpoints for managing contacts"
+    }
+  ],
   "schemes": [
     "https"
   ],
