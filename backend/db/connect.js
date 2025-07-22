@@ -1,4 +1,3 @@
-// backend/db/connect.js
 const dotenv = require('dotenv');
 dotenv.config();
 const { MongoClient } = require('mongodb');
@@ -13,24 +12,25 @@ const initDb = (callback) => {
 
   MongoClient.connect(process.env.MONGODB_URI)
     .then((client) => {
-      _db = client.db(); // this works because cse341 is in the URI now
-      console.log('✅ Database initialized');
+      // ✅ Explicitly connect to 'cse341' database
+      _db = client.db('cse341');
+      console.log('✅ Database initialized and connected to cse341');
       callback(null, _db);
     })
     .catch((err) => {
-      console.error('❌ DB Init Error:', err);
+      console.error('❌ Failed to connect to database:', err);
       callback(err);
     });
 };
 
 const getDb = () => {
   if (!_db) {
-    throw Error('Database not initialized');
+    throw Error('❌ Database not initialized');
   }
   return _db;
 };
 
 module.exports = {
   initDb,
-  getDb,
+  getDb
 };
