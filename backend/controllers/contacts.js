@@ -1,3 +1,5 @@
+// backend/controllers/contacts.js
+
 const { ObjectId } = require('mongodb');
 const { getDb } = require('../db/connect');
 
@@ -65,7 +67,7 @@ const updateContact = async (req, res) => {
       return res.status(404).json({ message: 'Contact not found' });
     }
 
-    res.status(204).send();
+    res.status(204).send(); // No content
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
