@@ -1,45 +1,38 @@
 // backend/server.js
 const express = require('express');
-const dotenv = require('dotenv');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const { initDb } = require('./db/connect');
-const routes = require('./routes');
+const contactsRoutes = require('./routes/contacts');
 const setupSwagger = require('../swagger');
 
-dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
-// ✅ Enable CORS
+require('dotenv').config();
+
 app.use(cors());
+app.use(bodyParser.json());
 
-// ✅ Manually set headers (Swagger UI needs these on Render)
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); // Allow all origins
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  next();
-});
-
-// ✅ Parse JSON bodies
-app.use(express.json());
-
-// ✅ Mount routes and Swagger
-app.use('/api', routes);
+// Mount Swagger documentation
 setupSwagger(app);
 
-// ✅ Base route
-app.get('/', (req, res) => {
-  res.send('API is running. Visit /api-docs for documentation.');
+// Mount API routes
+app.use('/api/contacts', contactsRoutes);
+
+// Optional: fallback for unrecognized routes
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found', url: req.originalUrl });
 });
 
-// ✅ Initialize DB before server starts
+// Start server after DB is initialized
 initDb((err) => {
   if (err) {
-    console.error('❌ Failed to connect to database:', err);
+    console.error(err);
   } else {
-    app.listen(port, () => {
-      console.log(`🚀 Server running on port ${port}`);
+    app.listen(PORT, () => {
+      console.log('✅ MongoDB connected');
+      console.log(`🚀 Server running on port ${PORT}`);
     });
   }
 });
