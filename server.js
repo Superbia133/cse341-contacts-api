@@ -2,9 +2,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { initDb } = require('./db/connect');
-const contactsRoutes = require('./routes/contacts');
-const setupSwagger = require('../swagger');
+const { initDb } = require('./backend/db/connect');
+const contactsRoutes = require('./backend/routes/contacts');
+const setupSwagger = require('./swagger');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
