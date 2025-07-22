@@ -1,98 +1,36 @@
-// backend/controllers/contacts.js
+// backend/db/connect.js
+const dotenv = require('dotenv');
+dotenv.config();
+const { MongoClient } = require('mongodb');
 
-const { ObjectId } = require('mongodb');
-const { getDb } = require('../db/connect');
+let _db;
 
-const getAllContacts = async (req, res) => {
-  try {
-    const db = getDb();
-    const contacts = await db.collection('contacts').find().toArray();
-    res.status(200).json(contacts);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+const initDb = (callback) => {
+  if (_db) {
+    console.log('Database is already initialized!');
+    return callback(null, _db);
   }
+
+  MongoClient.connect(process.env.MONGODB_URI)
+    .then((client) => {
+      _db = client.db('cse341'); // ✅ explicitly select the correct database
+      console.log('✅ Database initialized: cse341');
+      callback(null, _db);
+    })
+    .catch((err) => {
+      console.error('❌ Failed to initialize database:', err);
+      callback(err);
+    });
 };
 
-const getContactById = async (req, res) => {
-  try {
-    const db = getDb();
-    const contactId = new ObjectId(req.params.id);
-    const contact = await db.collection('contacts').findOne({ _id: contactId });
-
-    if (!contact) {
-      return res.status(404).json({ message: 'Contact not found' });
-    }
-
-    res.status(200).json(contact);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+const getDb = () => {
+  if (!_db) {
+    throw Error('❌ Database not initialized');
   }
-};
-
-const createContact = async (req, res) => {
-  try {
-    const db = getDb();
-    const contact = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      favoriteColor: req.body.favoriteColor,
-      birthday: req.body.birthday
-    };
-
-    const result = await db.collection('contacts').insertOne(contact);
-    res.status(201).json(result);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const updateContact = async (req, res) => {
-  try {
-    const db = getDb();
-    const contactId = new ObjectId(req.params.id);
-    const update = {
-      $set: {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        favoriteColor: req.body.favoriteColor,
-        birthday: req.body.birthday
-      }
-    };
-
-    const result = await db.collection('contacts').updateOne({ _id: contactId }, update);
-
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ message: 'Contact not found' });
-    }
-
-    res.status(204).send(); // No content
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const deleteContact = async (req, res) => {
-  try {
-    const db = getDb();
-    const contactId = new ObjectId(req.params.id);
-    const result = await db.collection('contacts').deleteOne({ _id: contactId });
-
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ message: 'Contact not found' });
-    }
-
-    res.status(200).json({ message: 'Contact deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+  return _db;
 };
 
 module.exports = {
-  getAllContacts,
-  getContactById,
-  createContact,
-  updateContact,
-  deleteContact
+  initDb,
+  getDb
 };
